@@ -331,7 +331,8 @@ else ifeq ($(platform), miyoo)
    SHARED := -shared -Wl,--version-script=link.T -Wl,-no-undefined
    
    DISABLE_ERROR_LOGGING := 1
-   CFLAGS += -fomit-frame-pointer -ffast-math -march=armv5te -mtune=arm926ej-s
+   CFLAGS += -fomit-frame-pointer -ffast-math -marm -mfpu=neon-vfpv4 -mfloat-abi=hard
+   CFLAGS += -DARM -mcpu=cortex-a7
   	ARM = 1
    USE_CYCLONE = 1
    USE_DRZ80 = 1

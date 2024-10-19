@@ -341,7 +341,7 @@ else ifeq ($(platform), xydds)
    TARGET := $(TARGET_NAME)_libretro.so
    CC = /opt/xydds/usr/bin/arm-linux-gcc
    AR = /opt/xydds/usr/bin/arm-linux-ar
-   fpic :=
+   fpic := -fPIC
    SHARED := -shared -Wl,--version-script=link.T -Wl,-no-undefined
    
    DISABLE_ERROR_LOGGING := 1

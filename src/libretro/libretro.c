@@ -51,8 +51,8 @@ static scond_t   *libretro_cond = NULL;
 static slock_t   *libretro_mutex = NULL;
 #endif
 
-unsigned frameskip_type                  = 0;
-unsigned frameskip_threshold             = 0;
+unsigned frameskip_type                  = 2;
+unsigned frameskip_threshold             = 50;
 unsigned frameskip_counter               = 0;
 unsigned frameskip_interval              = 0;
 
@@ -63,10 +63,10 @@ int retro_audio_buff_underrun            = false;
 unsigned retro_audio_latency             = 0;
 int update_audio_latency                 = false;
 
-int should_skip_frame                    = 0;
+int should_skip_frame                    = 1;
 
-static int sample_rate                   = 22050;
-static int stereo_enabled                = true;
+static int sample_rate                   = 11025;
+static int stereo_enabled                = false;
 
 int game_index = -1;
 unsigned short *gp2x_screen15;
@@ -222,7 +222,7 @@ static void update_variables(bool first_run)
     var.value = NULL;
 
     prev_frameskip_type = frameskip_type;
-    frameskip_type      = 0;
+    frameskip_type      = 2;
 
     if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
     {
@@ -235,7 +235,7 @@ static void update_variables(bool first_run)
     var.key = "mame2000-frameskip_threshold";
     var.value = NULL;
 
-    frameskip_threshold = 30;
+    frameskip_threshold = 50;
 
     if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
        frameskip_threshold = strtol(var.value, NULL, 10);
@@ -277,7 +277,7 @@ static void update_variables(bool first_run)
     var.value = NULL;
     var.key = "mame2000-sample_rate";
 
-    sample_rate = 22050;
+    sample_rate = 11025;
 
     if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
        sample_rate = strtol(var.value, NULL, 10);
@@ -293,7 +293,7 @@ static void update_variables(bool first_run)
             stereo_enabled = false;
     }
     else
-        stereo_enabled = true;
+        stereo_enabled = false;
 
    /* Reinitialise frameskipping, if required */
    if (!first_run &&
@@ -304,13 +304,13 @@ static void update_variables(bool first_run)
 void retro_set_environment(retro_environment_t cb)
 {
    static const struct retro_variable vars[] = {
-      { "mame2000-frameskip", "Frameskip ; disabled|auto|threshold" },
-      { "mame2000-frameskip_threshold", "Frameskip Threshold (%); 30|40|50|60" },
+      { "mame2000-frameskip", "Frameskip ; threshold|disabled|auto" },
+      { "mame2000-frameskip_threshold", "Frameskip Threshold (%); 50|40|50|60" },
       { "mame2000-frameskip_interval", "Frameskip Interval; 1|2|3|4|5|6|7|8|9" },
       { "mame2000-skip_disclaimer", "Skip Disclaimer; enabled|disabled" },
       { "mame2000-show_gameinfo", "Show Game Information; disabled|enabled" },
-      { "mame2000-sample_rate", "Audio Rate (Restart); 22050|11025|22050|32000|44100" },
-      { "mame2000-stereo", "Stereo (Restart); enabled|disabled" },
+      { "mame2000-sample_rate", "Audio Rate (Restart); 11025|11025|22050|32000|44100" },
+      { "mame2000-stereo", "Stereo (Restart); disabled|enabled" },
       { NULL, NULL },
    };
    environ_cb = cb;
